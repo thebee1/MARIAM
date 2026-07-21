@@ -56,6 +56,18 @@
         .logo span { color: var(--accent); }
 
         .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+        .menu-toggle {
+            display: none;
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: transparent;
+            color: var(--blanc);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
         .nav-links a {
             color: var(--gris);
             text-decoration: none;
@@ -85,6 +97,7 @@
             padding: 0 4rem;
             position: relative;
             overflow: hidden;
+            isolation: isolate;
         }
         .hero::before {
             content: '';
@@ -93,6 +106,14 @@
             width: 800px; height: 800px;
             background: radial-gradient(circle, rgba(201, 169, 110, 0.08) 0%, transparent 70%);
             border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(10, 10, 10, 0.96) 0%, rgba(10, 10, 10, 0.72) 55%, rgba(10, 10, 10, 0.4) 100%);
+            z-index: 0;
             pointer-events: none;
         }
         .hero-content { max-width: 600px; z-index: 2; }
@@ -511,19 +532,71 @@
 
         /* Responsive */
         @media (max-width: 1024px) {
-            .hero-image { display: none; }
             .about-grid { grid-template-columns: 1fr; }
             .contact-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 768px) {
-            nav { padding: 1rem 2rem; }
-            .nav-links { display: none; }
-            .hero { padding: 0 2rem; }
-            .hero h1 { font-size: 2.5rem; }
-            section { padding: 4rem 2rem; }
-            .projets-grid { grid-template-columns: 1fr; }
-            .modal { padding: 1rem; }
-            .modal-header, .modal-gallery { padding: 1.5rem; }
+            nav {
+                padding: 1rem 1.25rem;
+                flex-wrap: wrap;
+                gap: 0.8rem;
+            }
+            .menu-toggle { display: inline-flex; }
+            .nav-links {
+                width: 100%;
+                display: none;
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+                background: rgba(26, 26, 26, 0.98);
+                border-radius: 14px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+            }
+            .nav-links.open { display: flex; }
+            .hero {
+                padding: 6.5rem 1.25rem 3rem;
+                min-height: auto;
+                align-items: flex-start;
+                background:
+                    linear-gradient(180deg, rgba(10,10,10,0.3), rgba(10,10,10,0.95)),
+                    url('profil.png') center/cover no-repeat;
+            }
+            .hero::before {
+                opacity: 0.55;
+            }
+            .hero::after {
+                background: linear-gradient(180deg, rgba(10,10,10,0.32) 0%, rgba(10,10,10,0.88) 100%);
+            }
+            .hero-image { display: none; }
+            .hero h1 { font-size: 2.4rem; }
+            .hero p { max-width: 100%; }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            section { padding: 4rem 1.25rem; }
+            .projets-grid {
+                grid-template-columns: 1fr;
+                min-width: 0;
+            }
+            .projet-card,
+            .projet-image,
+            .projet-info {
+                min-width: 0;
+            }
+            .section-title { font-size: 2.2rem; }
+            .modal { padding: 0.75rem; }
+            .modal-header, .modal-gallery { padding: 1.25rem; }
+        }
+        @media (max-width: 480px) {
+            .logo { font-size: 1.3rem; }
+            .hero h1 { font-size: 2rem; }
+            .section-tag { letter-spacing: 2px; }
+            .social-links { gap: 0.75rem; }
         }
 
         /* Loading */
@@ -557,7 +630,8 @@
     <!-- Navigation -->
     <nav id="navbar">
         <a href="#" class="logo">Zanblé<span>.</span></a>
-        <ul class="nav-links">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+        <ul class="nav-links" id="nav-links">
             <li><a href="#accueil">Accueil</a></li>
             <li><a href="#projets">Projets</a></li>
             <li><a href="#apropos">À propos</a></li>
@@ -645,15 +719,16 @@
                 "nom": "Zanblé Lou Mariam",
                 "titre": "Étudiante en Communication Visuelle — 2ème année",
                 "bio": "Passionnée par le design graphique, la photographie et la direction artistique. J'explore les frontières entre image, typographie et espace pour raconter des histoires visuelles uniques.",
-                "email": "zanble.lou@email.com",
-                "telephone": "+225 07 12 34 56 78",
+                "email": "zambleloumariam2@gmail.com",
+                "telephone": "0713733677",
                 "localisation": "Abidjan, Côte d'Ivoire",
                 "photo": "profil.png",
                 "social": {
                     "instagram": "https://instagram.com/zanblelou",
                     "behance": "https://behance.net/zanblelou",
-                    "linkedin": "https://linkedin.com/in/zanblelou",
-                    "dribbble": "https://dribbble.com/zanblelou"
+                    "linkedin": "https://www.linkedin.com/in/lou-mariam-zamble-372282416/",
+                    "dribbble": "https://dribbble.com/zanblelou",
+                    "tiktok": "https://www.tiktok.com/@rachelglorieuse"
                 }
             },
             "competences": [
@@ -769,7 +844,7 @@
             `;
 
             const socialLinks = document.getElementById('social-links');
-            const socialIcons = { instagram: 'IG', behance: 'Be', linkedin: 'in', dribbble: 'Dr' };
+            const socialIcons = { instagram: 'IG', behance: 'Be', linkedin: 'in', dribbble: 'Dr', tiktok: 'Tik' };
             socialLinks.innerHTML = Object.entries(portfolioData.profil.social)
                 .filter(([key, value]) => value)
                 .map(([key, value]) => `
@@ -822,6 +897,21 @@
             document.body.style.overflow = '';
             document.querySelectorAll('video, audio').forEach(el => el.pause());
         }
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+            menuToggle.textContent = navLinks.classList.contains('open') ? '✕' : '☰';
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('open');
+                menuToggle.textContent = '☰';
+            });
+        });
 
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
